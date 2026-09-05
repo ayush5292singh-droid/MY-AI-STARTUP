@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b10">
+  <title>VYRO Business OS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div id="toast"></div>
+
+<header class="topbar">
+  <div>
+    <div class="brand">VYRO</div>
+    <div class="brand-sub">BUSINESS OS</div>
+  </div>
+  <button class="icon-btn" onclick="openScanner()">⌁</button>
+</header>
+
+<main>
+
+<section id="dashboard" class="page active">
+  <div class="hero">
+    <div>
+      <p class="muted">BUSINESS OVERVIEW</p>
+      <h1 id="businessName">My Business</h1>
+      <p id="todayText"></p>
+    </div>
+    <button class="primary" onclick="openModal('saleModal')">+ Sale</button>
+  </div>
+
+  <div class="cards">
+    <div class="card balance">
+      <span>Revenue</span>
+      <strong id="revenue">₹0</strong>
+      <small id="revenueChange">All time</small>
+    </div>
+
+    <div class="card">
+      <span>Expenses</span>
+      <strong id="expenses">₹0</strong>
+      <small>Total recorded</small>
+    </div>
+
+    <div class="card">
+      <span>Profit</span>
+      <strong id="profit">₹0</strong>
+      <small>Revenue − expenses</small>
+    </div>
+
+    <div class="card">
+      <span>Stock value</span>
+      <strong id="stockValue">₹0</strong>
+      <small>Current inventory</small>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>Quick actions</h2>
+  </div>
+
+  <div class="quick-grid">
+    <button onclick="openScanner()">📸<b>Scan Bill</b><small>OCR receipt</small></button>
+    <button onclick="startBarcode()">▦<b>Barcode</b><small>Scan product</small></button>
+    <button onclick="openModal('productModal')">📦<b>Add Product</b><small>Inventory</small></button>
+    <button onclick="openModal('expenseModal')">💸<b>Expense</b><small>Record cost</small></button>
+    <button onclick="openModal('customerModal')">👤<b>Customer</b><small>Add customer</small></button>
+    <button onclick="openModal('employeeModal')">👨‍💼<b>Employee</b><small>Add employee</small></button>
+  </div>
+
+  <div class="section-head">
+    <h2>Business health</h2>
+  </div>
+
+  <div class="panel">
+    <div class="health-row">
+      <span>Revenue</span>
+      <div class="progress"><i id="revBar"></i></div>
+      <b id="revHealth">0%</b>
+    </div>
+    <div class="health-row">
+      <span>Profit margin</span>
+      <div class="progress"><i id="profitBar"></i></div>
+      <b id="profitHealth">0%</b>
+    </div>
+    <div class="health-row">
+      <span>Inventory</span>
+      <div class="progress"><i id="stockBar"></i></div>
+      <b id="stockHealth">0%</b>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>AI Business Insight</h2>
+  </div>
+
+  <div class="insight" id="insight">
+    Add some sales, expenses and products and VYRO will analyse your business.
+  </div>
+</section>
+
+
+<section id="sales" class="page">
+  <div class="page-title">
+    <div><p class="muted">TRANSACTIONS</p><h1>Sales</h1></div>
+    <button class="primary" onclick="openModal('saleModal')">+ Sale</button>
+  </div>
+
+  <div class="search"><input id="saleSearch" placeholder="Search sales..." oninput="renderSales()"></div>
+  <div id="salesList"></div>
+</section>
+
+
+<section id="inventory" class="page">
+  <div class="page-title">
+    <div><p class="muted">PRODUCT MANAGEMENT</p><h1>Inventory</h1></div>
+    <button class="primary" onclick="openModal('productModal')">+ Product</button>
+  </div>
+
+  <div class="search"><input id="productSearch" placeholder="Search products..." oninput="renderProducts()"></div>
+  <div id="productsList"></div>
+</section>
+
+
+<section id="expensesPage" class="page">
+  <div class="page-title">
+    <div><p class="muted">MONEY OUT</p><h1>Expenses</h1></div>
+    <button class="primary" onclick="openModal('expenseModal')">+ Expense</button>
+  </div>
+
+  <div id="expensesList"></div>
+</section>
+
+
+<section id="customers" class="page">
+  <div class="page-title">
+    <div><p class="muted">RELATIONSHIPS</p><h1>Customers</h1></div>
+    <button class="primary" onclick="openModal('customerModal')">+ Customer</button>
+  </div>
+
+  <div id="customersList"></div>
+</section>
+
+
+<section id="employees" class="page">
+  <div class="page-title">
+    <div><p class="muted">TEAM</p><h1>Employees</h1></div>
+    <button class="primary" onclick="openModal('employeeModal')">+ Employee</button>
+  </div>
+
+  <div id="employeesList"></div>
+</section>
+
+
+<section id="reports" class="page">
+  <div class="page-title">
+    <div><p class="muted">ANALYTICS</p><h1>Reports</h1></div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><span>Total sales</span><strong id="rSales">₹0</strong></div>
+    <div class="card"><span>Total expenses</span><strong id="rExpenses">₹0</strong></div>
+    <div class="card"><span>Profit</span><strong id="rProfit">₹0</strong></div>
+    <div class="card"><span>Orders</span><strong id="rOrders">0</strong></div>
+  </div>
+
+  <div class="panel">
+    <h2>Revenue vs Expenses</h2>
+    <div class="chart" id="chart"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Top products</h2>
+    <div id="topProducts"></div>
+  </div>
+</section>
+
+
+<section id="settings" class="page">
+  <div class="page-title">
+    <div><p class="muted">CONFIGURATION</p><h1>Settings</h1></div>
+  </div>
+
+  <div class="panel">
+    <label>Business name</label>
+    <input id="settingsBusiness" placeholder="My Business">
+
+    <label>Currency</label>
+    <select id="currency">
+      <option value="₹">₹ INR</option>
+      <option value="$">$ USD</option>
+      <option value="€">€ EUR</option>
+      <option value="£">£ GBP</option>
+    </select>
+
+    <button class="primary wide" onclick="saveSettings()">Save settings</button>
+  </div>
+
+  <div class="panel">
+    <h2>Data</h2>
+    <button class="secondary wide" onclick="exportData()">⬇ Backup business</button>
+    <br>
+    <button class="secondary wide" onclick="document.getElementById('restoreInput').click()">⬆ Restore backup</button>
+    <input type="file" id="restoreInput" hidden accept=".json" onchange="restoreData(event)">
+    <br>
+    <button class="danger wide" onclick="resetData()">Reset all data</button>
+  </div>
+
+  <div class="about">
+    <b>VYRO Business OS</b>
+    <p>Smart business management MVP.</p>
+  </div>
+</section>
+
+</main>
+
+
+<nav class="bottom-nav">
+  <button class="nav active" data-page="dashboard">⌂<span>Home</span></button>
+  <button class="nav" data-page="sales">₹<span>Sales</span></button>
+  <button class="nav" data-page="inventory">▦<span>Stock</span></button>
+  <button class="nav" data-page="reports">◒<span>Reports</span></button>
+  <button class="nav" data-page="settings">⚙<span>More</span></button>
+</nav>
+
+
+<!-- SALE MODAL -->
+<div class="modal" id="saleModal">
+<div class="modal-box">
+<button class="close" onclick="closeModal('saleModal')">×</button>
+<h2>Record Sale</h2>
+
+<label>Product</label>
+<select id="saleProduct"></select>
+
+<label>Quantity</label>
+<input id="saleQty" type="number" min="1" value="1">
+
+<label>Selling price</label>
+<input id="salePrice" type="number" min="0" placeholder="Price">
+
+<label>Customer</label>
+<input id="saleCustomer" placeholder="Customer name">
+
+<button class="primary wide" onclick="addSale()">Save sale</button>
+</div>
+</div>
+
+
+<!-- PRODUCT MODAL -->
+<div class="modal" id="productModal">
+<div class="modal-box">
+<button class="close" onclick="closeModal('productModal')">×</button>
+<h2>Add Product</h2>
+
+<label>Product name</label>
+<input id="pName" placeholder="Example: Notebook">
+
+<label>SKU / Barcode</label>
+<input id="pSku" placeholder="Optional">
+
+<label>Purchase price</label>
+<input id="pBuy" type="number" placeholder="0">
+
+<label>Selling price</label>
+<input id="pSell" type="number" placeholder="0">
+
+<label>Stock quantity</label>
+<input id="pStock" type="number" placeholder="0">
+
+<button class="primary wide" onclick="addProduct()">Add product</button>
+</div>
+</div>
+
+
+<!-- EXPENSE MODAL -->
+<div class="modal" id="expenseModal">
+<div class="modal-box">
+<button class="close" onclick="closeModal('expenseModal')">×</button>
+<h2>Add Expense</h2>
+
+<label>Description</label>
+<input id="eName" placeholder="Electricity">
+
+<label>Category</label>
+<select id="eCategory">
+<option>Utilities</option>
+<option>Rent</option>
+<option>Inventory</option>
+<option>Salary</option>
+<option>Transport</option>
+<option>Marketing</option>
+<option>Other</option>
+</select>
+
+<label>Amount</label>
+<input id="eAmount" type="number" placeholder="0">
+
+<button class="primary wide" onclick="addExpense()">Save expense</button>
+</div>
+</div>
+
+
+<!-- CUSTOMER MODAL -->
+<div class="modal" id="customerModal">
+<div class="modal-box">
+<button class="close" onclick="closeModal('customerModal')">×</button>
+<h2>Add Customer</h2>
+
+<label>Name</label>
+<input id="cName" placeholder="Customer name">
+
+<label>Phone</label>
+<input id="cPhone" placeholder="Phone">
+
+<label>Outstanding amount</label>
+<input id="cDue" type="number" placeholder="0">
+
+<button class="primary wide" onclick="addCustomer()">Save customer</button>
+</div>
+</div>
+
+
+<!-- EMPLOYEE MODAL -->
+<div class="modal" id="employeeModal">
+<div class="modal-box">
+<button class="close" onclick="closeModal('employeeModal')">×</button>
+<h2>Add Employee</h2>
+
+<label>Name</label>
+<input id="empName" placeholder="Employee name">
+
+<label>Role</label>
+<input id="empRole" placeholder="Manager">
+
+<label>Monthly salary</label>
+<input id="empSalary" type="number" placeholder="0">
+
+<button class="primary wide" onclick="addEmployee()">Save employee</button>
+</div>
+</div>
+
+
+<!-- SCANNER -->
+<div class="modal" id="scannerModal">
+<div class="modal-box scanner-box">
+<button class="close" onclick="closeModal('scannerModal')">×</button>
+<h2>Smart Scanner</h2>
+<p class="muted">Scan a receipt, invoice or business document.</p>
+
+<div class="scan-options">
+<label class="scan-button">
+📸
+<span>Upload / Camera</span>
+<input type="file" accept="image/*" capture="environment" onchange="scanReceipt(event)">
+</label>
+
+<button class="scan-button" onclick="startBarcode()">
+▦
+<span>Barcode</span>
+</button>
+</div>
+
+<div id="ocrResult"></div>
+</div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
